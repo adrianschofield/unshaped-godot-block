@@ -1,0 +1,32 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://cwk8pwaf4of2h"]
+
+[ext_resource type="Texture2D" uid="uid://cyla5s4yvur3i" path="res://Assets/Sprites/BlueBat.png" id="1_4w6j7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lbnjk"]
+bg_color = Color(0.290196, 0.466667, 0.137255, 1)
+border_width_bottom = 6
+border_color = Color(0.243137, 0.392157, 0.109804, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+shadow_color = Color(0.156863, 0.376471, 0.301961, 0.6)
+shadow_size = 6
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_86jtd"]
+texture = ExtResource("1_4w6j7")
+
+[resource]
+Button/constants/outline_size = 0
+Button/styles/normal = SubResource("StyleBoxFlat_lbnjk")
+Label/colors/font_color = Color(0.290196, 0.466667, 0.137255, 1)
+Label/colors/font_outline_color = Color(1, 1, 1, 0.839216)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0)
+Label/constants/outline_size = 4
+Label/font_sizes/font_size = 32
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_86jtd")

@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://dc7lj1dg2usgq"]
+
+[ext_resource type="Script" path="res://Scripts/ball.gd" id="1_vg721"]
+[ext_resource type="Texture2D" uid="uid://brscynxuge71m" path="res://Assets/Sprites/Ball.png" id="2_oeglu"]
+[ext_resource type="AudioStream" uid="uid://nix3olqxrlxu" path="res://Assets/Sounds/died.wav" id="3_b08ay"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_510ak"]
+radius = 16.0312
+
+[node name="Ball" type="CharacterBody2D"]
+script = ExtResource("1_vg721")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_oeglu")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_510ak")
+
+[node name="Died" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_b08ay")
+
+[connection signal="finished" from="Died" to="." method="_on_died_finished"]
