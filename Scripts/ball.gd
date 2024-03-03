@@ -46,9 +46,34 @@ func _ready():
 	position.x = (max_pos.x - min_pos.x) / 2
 	
 	# initially the ball should have a random velocity down towards the player
+	# We want the ball to drop within a 90 degree angle
+	# So first calculate a random speed for the ball
 	var rng = RandomNumberGenerator.new()
-	my_velocity.x = rng.randf_range(MIN_MOVE_SPEED, MAX_MOVE_SPEED)
-	my_velocity.y = rng.randf_range(0, MAX_MOVE_SPEED)
+	var speed_multiplier = rng.randf_range(MIN_MOVE_SPEED, MAX_MOVE_SPEED)
+	
+	# Now we need to determine x and y
+	# x can be anywhere from -1 to 1
+	# y must always be positive so the ball falls
+	# Calculate the x direction
+	var x_direction = rng.randf_range(-1.0, 1.0)
+	
+	# y direction is more complicated because we want it to be 45 degrees either
+	# side of x = 0 (I need to draw a diagram in comments)
+	# For the direction to be 45 degrees the y direction component cannot be more
+	# than the x direction
+	# If x is negative we need to make it positive before determining y
+	# If x is positive it's fine
+	var y_direction = 0
+	if x_direction < 0 :
+		y_direction = rng.randf_range(-(x_direction), 1.0)
+	else :
+		y_direction = rng.randf_range(x_direction, 1.0)
+	# DBG
+	print(x_direction, " ", y_direction)
+	
+	# Now factor in the speed to get the values for the velocity vector
+	my_velocity.x = x_direction * speed_multiplier
+	my_velocity.y = y_direction * speed_multiplier
 	
 	# connect our signals
 	Global.level_finished.connect(ball_level_finished)
