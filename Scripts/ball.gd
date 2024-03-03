@@ -17,7 +17,7 @@ var max_y : float = 0.0
 var min_y : float = 0.0
 
 # initial speed of ball and it's velocity
-var move_speed : float = 250.0
+@export var move_speed : float = 250.0
 var my_velocity = Vector2(0,0)
 
 # I need to manage when the player misses the ball
@@ -48,7 +48,7 @@ func _ready():
 	# initially the ball should have a random velocity down towards the player
 	var rng = RandomNumberGenerator.new()
 	my_velocity.x = rng.randf_range(MIN_MOVE_SPEED, MAX_MOVE_SPEED)
-	my_velocity.y = rng.randf_range(-MAX_MOVE_SPEED, MAX_MOVE_SPEED)
+	my_velocity.y = rng.randf_range(0, MAX_MOVE_SPEED)
 	
 	# connect our signals
 	Global.level_finished.connect(ball_level_finished)
@@ -109,7 +109,8 @@ func hit_block():
 	velocity = my_velocity
 	
 	# TODO I probably should be using move_and_collide()
-	move_and_slide()
+	# move_and_slide()
+	move_and_collide(my_velocity * get_process_delta_time())
 	
 func missed_player():
 	# DBG

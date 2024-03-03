@@ -57,6 +57,7 @@ func update_block_count():
 	# the game ends if all the blocks are destroyed
 	if block_count <= 0:
 		# TODO We need to kill the ball
+		# TODO Check if we increase the score
 		Global.do_level_finished()
 		Global.next_level()
 	else:
