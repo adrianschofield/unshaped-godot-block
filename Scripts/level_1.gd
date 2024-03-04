@@ -1,8 +1,8 @@
 extends Node2D
 
 # Blocks will be generated in a grid using the following information
-const BLOCK_ROWS : int = 2 # 4 rows
-const BLOCK_COLS : int = 4 # 5 columns
+const BLOCK_ROWS : int = 5 # 4 rows in a for in
+const BLOCK_COLS : int = 11 # 10 columns in a for in
 const BLOCK_PADDING : int = 10
 # TODO get these from the sprite
 const BLOCK_HEIGHT : int = 32
