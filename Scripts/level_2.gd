@@ -71,4 +71,4 @@ func update_block_count():
 		Global.do_update_score(POINTS)
 	
 	# DBG
-	print (block_count, Global.score)
+	# print (block_count, Global.score)
