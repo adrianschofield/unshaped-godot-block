@@ -13,7 +13,7 @@ func _process(_delta):
 
 func _on_body_entered(body):
 	# DBG
-	print(body.name)
+	# print(body.name)
 	# Tell the ball it hit a block
 	body.hit_block()
 	

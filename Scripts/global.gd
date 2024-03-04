@@ -58,7 +58,7 @@ func next_level():
 	current_level += 1
 
 	# DBG
-	print(current_level)
+	# print(current_level)
 	# TODO Check for the end etc etc
 	if current_level > max_level:
 		do_game_over()
@@ -72,7 +72,7 @@ func next_level():
 
 func _deferred_goto_scene():
 	# DBG
-	print("_deferred_goto_scene")
+	# print("_deferred_goto_scene")
 	
 	# Remove the current scene
 	current_scene.free()
