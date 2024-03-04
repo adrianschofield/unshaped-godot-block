@@ -55,5 +55,7 @@ func _physics_process(_delta):
 	# normalize the velocity to prevent fast diagonal movement	
 	velocity = velocity.normalized() * MOVE_SPEED
 	
-	# TODO I should probably be using move_and_collide()
-	move_and_slide()
+	# Move the player
+	# TODO do I need to check for collisions here?
+	# I don't think so as the ball handles that
+	move_and_collide(velocity * _delta)

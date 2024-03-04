@@ -82,15 +82,15 @@ func _ready():
 func _physics_process(_delta):
 	
 	# Let's see if the ball has collided with anything
-	for i in get_slide_collision_count():
-		var collision = get_slide_collision(i)
-		# DBG
-		print("I collided with ", collision.get_collider().name)
-		if collision.get_collider().name == "Player":
-			# We need to work out the velocity and bounce it back
-			# x can continue but y needs to be inverted
-			# TODO add some spin from the speed of the bat
-			my_velocity.y = -(my_velocity.y)
+	#for i in get_slide_collision_count():
+		#var collision = get_slide_collision(i)
+		## DBG
+		#print("I collided with ", collision.get_collider().name)
+		#if collision.get_collider().name == "Player":
+			## We need to work out the velocity and bounce it back
+			## x can continue but y needs to be inverted
+			## TODO add some spin from the speed of the bat
+			#my_velocity.y = -(my_velocity.y)
 			
 	# Before we move the ball let's see if they'll be outside the camera
 	if position.x < min_x:
@@ -120,8 +120,12 @@ func _physics_process(_delta):
 		my_velocity = my_velocity.normalized() * (move_speed * Global.speed_multiplier)
 		velocity = my_velocity
 	
-		# TODO I probably should be using move_and_collide()
-		move_and_slide()
+		# Move the ball and see if we collided with the player
+		var collision = move_and_collide(my_velocity * _delta)
+		# TODO if this a collision with the player I need to alter the velocity of the ball
+		# based on the velocity of the player
+		if collision:
+			my_velocity.y = -(my_velocity.y)
 	
 func hit_block():
 	# DBG
@@ -132,10 +136,6 @@ func hit_block():
 	my_velocity.y = -(my_velocity.y)
 	my_velocity = my_velocity.normalized() * move_speed
 	velocity = my_velocity
-	
-	# TODO I probably should be using move_and_collide()
-	# move_and_slide()
-	move_and_collide(my_velocity * get_process_delta_time())
 	
 func missed_player():
 	# DBG
