@@ -140,8 +140,9 @@ func _physics_process(_delta):
 				# Slow the ball down if player and ball are going in opposite directions
 				elif (player_velocity.x < 0 and my_velocity.x > 0) or (player_velocity.x > 0 and my_velocity.x < 0):
 					my_velocity.x = my_velocity.x * (1 / SPEED_MULTIPLIER)
-
+			# Always adjust the y component to "bounce" the ball
 			my_velocity.y = -(my_velocity.y)
+			# DBG
 			print("Ball Velocity after change ", my_velocity.x, " ",my_velocity.y)
 	
 func hit_block():
