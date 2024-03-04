@@ -13,6 +13,16 @@ func _ready():
 	Global.update_score.connect(ui_update_score)
 	Global.update_lives.connect(ui_update_lives)
 	#Global.game_over.connect(ui_game_over)
+	
+	# We need to adjust for any lives lost in a previous level
+	if Global.lives == 2:
+		# Set the texture for Life1 to be blank
+		get_node("PanelContainer/MarginContainer/GridContainer/Life1").texture = blank_life
+	if Global.lives == 1:
+		# Set the texture for Life1 to be blank
+		get_node("PanelContainer/MarginContainer/GridContainer/Life1").texture = blank_life
+		# Set the texture for Life2 to be blank
+		get_node("PanelContainer/MarginContainer/GridContainer/Life2").texture = blank_life
 
 func ui_set_default_values():
 	get_node("PanelContainer/MarginContainer/GridContainer/ScoreLabel").text = str(Global.score)
