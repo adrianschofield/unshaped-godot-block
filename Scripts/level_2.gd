@@ -1,8 +1,8 @@
 extends Node2D
 
 # Blocks will be generated in a grid using the following information
-const BLOCK_ROWS : int = 2 # 1 rows
-const BLOCK_COLS : int = 6 # 5 columns
+const BLOCK_ROWS : int = 5 # 4 rows - starts at 1 in a for in loop
+const BLOCK_COLS : int = 10 # 10 columns - starts at 1 in a while
 const BLOCK_PADDING : int = 10
 # TODO get these from the sprite
 const BLOCK_HEIGHT : int = 32
@@ -34,8 +34,15 @@ func _process(_delta):
 func spawn_blocks():
 	# I want to programatically create my blocks rather than just manually adding them to the scene
 	# Create a loop, I need to start at 1 not zero so using a range, for both x and y
-	for x in range (1, BLOCK_COLS):
-		for y in range (1, BLOCK_ROWS):
+	
+	# I want this to be different to level 1 so skip every other block
+	# for x in range (1, BLOCK_COLS):
+	
+	for y in range (1, BLOCK_ROWS):
+		var x = 1
+		if (y % 2 == 0):
+			x = x + 1
+		while (x <= BLOCK_COLS):
 			# Create a new instance of the block scene which is preloaded
 			var block_instance = block_scene.instantiate()
 			# Work out the position of the block based on a grid design
@@ -47,6 +54,8 @@ func spawn_blocks():
 			block_instance.block_destroyed.connect(update_block_count)
 			# Add the new scene to the main scene
 			add_child(block_instance)
+			# Now increment the x value
+			x = x + 2
 			
 	
 func update_block_count():
