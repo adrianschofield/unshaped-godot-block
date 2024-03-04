@@ -1,13 +1,16 @@
 extends CharacterBody2D
 
-const MAX_MOVE_SPEED = 450.0
-const MIN_MOVE_SPEED = 250.0
+const MAX_MOVE_SPEED : float = 450.0
+const MIN_MOVE_SPEED : float = 250.0
+
+# Multiplier to change ball speed when it collides with the player
+@export var SPEED_MULTIPLIER : float = 0.1
 
 # TODO calculate this from the scene or something
-const BALL_WIDTH = 32
+const BALL_WIDTH : int = 32
 
 # Padding to stop the player actually hitting the edge of the screen
-const PADDING = 10
+const PADDING : int = 10
 
 # Variables to capture the maximum size of the screen so that we can
 # position the ball and player properly
@@ -69,7 +72,7 @@ func _ready():
 	else :
 		y_direction = rng.randf_range(x_direction, 1.0)
 	# DBG
-	print(x_direction, " ", y_direction)
+	# print(x_direction, " ", y_direction)
 	
 	# Now factor in the speed to get the values for the velocity vector
 	my_velocity.x = x_direction * speed_multiplier
@@ -125,7 +128,21 @@ func _physics_process(_delta):
 		# TODO if this a collision with the player I need to alter the velocity of the ball
 		# based on the velocity of the player
 		if collision:
+			if (collision.get_collider().name == "Player"):
+				# OK we collided with the player
+				var player_velocity = collision.get_collider_velocity()
+				# DBG
+				print("Ball Velocity before change ", my_velocity.x, " ", my_velocity.y)
+				# There are four different scenarios we need to handle
+				# Speed the ball up if player and ball are going in the same direction
+				if (player_velocity.x > 0 and my_velocity.x > 0) or (player_velocity.x < 0 and my_velocity.x < 0) :
+					my_velocity.x = my_velocity.x * SPEED_MULTIPLIER
+				# Slow the ball down if player and ball are going in opposite directions
+				elif (player_velocity.x < 0 and my_velocity.x > 0) or (player_velocity.x > 0 and my_velocity.x < 0):
+					my_velocity.x = my_velocity.x * (1 / SPEED_MULTIPLIER)
+
 			my_velocity.y = -(my_velocity.y)
+			print("Ball Velocity after change ", my_velocity.x, " ",my_velocity.y)
 	
 func hit_block():
 	# DBG
