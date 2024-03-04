@@ -4,7 +4,7 @@ const MAX_MOVE_SPEED : float = 450.0
 const MIN_MOVE_SPEED : float = 250.0
 
 # Multiplier to change ball speed when it collides with the player
-@export var SPEED_MULTIPLIER : float = 0.1
+@export var SPEED_MULTIPLIER : float = 1.5
 
 # TODO calculate this from the scene or something
 const BALL_WIDTH : int = 32
@@ -20,7 +20,7 @@ var max_y : float = 0.0
 var min_y : float = 0.0
 
 # initial speed of ball and it's velocity
-@export var move_speed : float = 250.0
+@export var move_speed : float = 350.0
 var my_velocity = Vector2(0,0)
 
 # I need to manage when the player misses the ball
