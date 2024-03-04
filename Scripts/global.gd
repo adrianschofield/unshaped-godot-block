@@ -50,7 +50,7 @@ func reset_defaults():
 	score = 0
 	lives = 3
 	current_level = 0
-	game_over = false
+	# game_over = false
 	
 # This is called by the FinishFlag when it's entered
 func next_level():

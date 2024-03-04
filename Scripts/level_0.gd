@@ -16,3 +16,4 @@ func _process(delta):
 
 func _on_button_button_down():
 	Global.next_level()
+	Global.game_over = false
