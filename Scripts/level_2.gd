@@ -11,7 +11,7 @@ const BLOCK_WIDTH : int = 96
 const POINTS : int = 10
 
 # Total number of blocks spawned in so that we can keep track
-var block_count : int = (BLOCK_ROWS - 1) * (BLOCK_COLS - 1)
+var block_count : int = 0
 
 # preload the ball scene so that we can instantiate balls
 # var ball_scene = preload("res://ball.tscn")
@@ -54,6 +54,8 @@ func spawn_blocks():
 			add_child(block_instance)
 			# Now increment the x value
 			x = x + 2
+			# increase the number of blocks we added
+			block_count = block_count + 1
 			
 	
 func update_block_count():
