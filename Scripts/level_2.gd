@@ -35,9 +35,7 @@ func spawn_blocks():
 	# I want to programatically create my blocks rather than just manually adding them to the scene
 	# Create a loop, I need to start at 1 not zero so using a range, for both x and y
 	
-	# I want this to be different to level 1 so skip every other block
-	# for x in range (1, BLOCK_COLS):
-	
+	# I want this to be different to level 1 so skip every other block	
 	for y in range (1, BLOCK_ROWS):
 		var x = 1
 		if (y % 2 == 0):
