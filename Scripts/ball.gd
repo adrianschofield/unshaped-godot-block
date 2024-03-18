@@ -52,7 +52,7 @@ func _ready():
 	# We want the ball to drop within a 90 degree angle
 	# So first calculate a random speed for the ball
 	var rng = RandomNumberGenerator.new()
-	var speed_multiplier = rng.randf_range(MIN_MOVE_SPEED, MAX_MOVE_SPEED)
+	var start_speed_multiplier = rng.randf_range(MIN_MOVE_SPEED, MAX_MOVE_SPEED)
 	
 	# Now we need to determine x and y
 	# x can be anywhere from -1 to 1
@@ -75,8 +75,8 @@ func _ready():
 	# print(x_direction, " ", y_direction)
 	
 	# Now factor in the speed to get the values for the velocity vector
-	my_velocity.x = x_direction * speed_multiplier
-	my_velocity.y = y_direction * speed_multiplier
+	my_velocity.x = x_direction * start_speed_multiplier
+	my_velocity.y = y_direction * start_speed_multiplier
 	
 	# connect our signals
 	Global.level_finished.connect(ball_level_finished)
