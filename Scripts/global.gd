@@ -13,7 +13,7 @@ var lives : int = 3
 const PLAYER_Y : int = 575
 
 # ball state
-var speed_multiplier : float = 1.0
+# var speed_multiplier : float = 1.0
 
 # game state
 var game_over : bool = false
