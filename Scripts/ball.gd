@@ -3,6 +3,8 @@ extends CharacterBody2D
 const MAX_MOVE_SPEED : float = 450.0
 const MIN_MOVE_SPEED : float = 250.0
 
+@export var initial_ball_speed : float = 300.0
+
 # Multiplier to change ball speed when it collides with the player
 @export var SPEED_MULTIPLIER : float = 1.1
 
@@ -19,8 +21,8 @@ var min_x : float = 0.0
 var max_y : float = 0.0
 var min_y : float = 0.0
 
-# initial speed of ball and it's velocity
-@export var move_speed : float = 350.0
+# speed of ball
+var move_speed : float = 0.0
 # var my_velocity = Vector2(0,0)
 
 # I need to manage when the player misses the ball
@@ -55,50 +57,27 @@ func _ready():
 	Global.level_finished.connect(ball_level_finished)
 	
 
-func _physics_process(_delta):
-	
-	# Let's see if the ball has collided with anything
-	#for i in get_slide_collision_count():
-		#var collision = get_slide_collision(i)
-		## DBG
-		#print("I collided with ", collision.get_collider().name)
-		#if collision.get_collider().name == "Player":
-			## We need to work out the velocity and bounce it back
-			## x can continue but y needs to be inverted
-			## TODO add some spin from the speed of the bat
-			#my_velocity.y = -(my_velocity.y)
+func _physics_process(delta):
 			
 	# Before we move the ball let's see if they'll be outside the camera
 	if position.x < min_x:
 		velocity.x = -(velocity.x)
-	else:
-		velocity.x -= 1
 
 	if position.x > max_x:
 		velocity.x = -(velocity.x)
-	else:
-		velocity.x += 1
-		
+
 	if position.y < min_y:
 		velocity.y = -(velocity.y)
-	else:
-		velocity.y -= 1
 
 	# for the max of y if we got further than y = PLAYER_Y we passed the bat and so
 	# we lose a life
 	if position.y > Global.PLAYER_Y:
 		missed_player()
-	else:
-		velocity.y += 1
 	
 	if player_missed == false:
-		# normalize the velocity to prevent fast diagonal movement	
-		# my_velocity = my_velocity.normalized() * (move_speed * SPEED_MULTIPLIER)
-		# my_velocity = my_velocity.normalized() * (move_speed)
-		# velocity = my_velocity
 	
 		# Move the ball and see if we collided with the player
-		var collision = move_and_collide(velocity * _delta)
+		var collision = move_and_collide(velocity * delta)
 		# TODO if this a collision with the player I need to alter the velocity of the ball
 		# based on the velocity of the player
 		if collision:
@@ -115,7 +94,7 @@ func _physics_process(_delta):
 				elif (player_velocity.x < 0 and velocity.x > 0) or (player_velocity.x > 0 and velocity.x < 0):
 					velocity.x = velocity.x * (1 / SPEED_MULTIPLIER)
 				# After adjusting the x we want to make sure that the y velocity does not
-				# allow the ball to get too horizontal. We can do this by compaing the ratio
+				# allow the ball to get too horizontal. We can do this by comparing the ratio
 				# of x and y and tweaking y if required
 				if (velocity.x < 0):
 					if (velocity.y / -(velocity.x) < 0.5 ):
@@ -126,7 +105,7 @@ func _physics_process(_delta):
 				# Finally update the actual speed
 				move_speed = move_speed * SPEED_MULTIPLIER
 			# Always adjust the y component to "bounce" the ball
-			# my_velocity.y = -(my_velocity.y)
+			velocity.y = -(velocity.y)
 			# DBG
 			# print("Ball Velocity after change ", velocity.x, " ",velocity.y)
 	
@@ -138,7 +117,7 @@ func hit_block():
 	# which are not handled here
 	# TODO replace with bounce()
 	velocity.y = -(velocity.y)
-	velocity = velocity.normalized() * move_speed
+	# velocity = velocity.normalized() * move_speed
 	
 func missed_player():
 	# DBG
@@ -173,9 +152,8 @@ func ball_level_finished():
 func calc_ball_initial_velocity():
 	# initially the ball should have a random velocity down towards the player
 	# We want the ball to drop within a 90 degree angle but not straight down
-	# So first calculate a random speed for the ball
-	var rng = RandomNumberGenerator.new()
-	var start_speed_multiplier = rng.randf_range(MIN_MOVE_SPEED, MAX_MOVE_SPEED)
+	# Set the speed to the initial speed
+	move_speed = initial_ball_speed
 	
 	# OK with a better understanding of Linear Algebra I should be able to 
 	# make this easier to understand
@@ -185,6 +163,7 @@ func calc_ball_initial_velocity():
 	
 	# Now we need to create the x component
 	# x can be between -1 and -0.5 or between 0.5 and 1
+	var rng = RandomNumberGenerator.new()
 	var x = 0.0
 	while (x > -0.5 and x < 0.5):
 		x = rng.randf_range(-1.0, 1.0)
@@ -193,7 +172,7 @@ func calc_ball_initial_velocity():
 	initial_velocity.x = x
 	
 	# Apply the velocity to the ball
-	velocity = initial_velocity.normalized() * start_speed_multiplier
+	velocity = initial_velocity.normalized() * move_speed
 	
 	# Now we need to determine x and y
 	# x can be anywhere from -1 to 1
