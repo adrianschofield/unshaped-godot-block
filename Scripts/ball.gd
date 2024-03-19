@@ -4,7 +4,7 @@ const MAX_MOVE_SPEED : float = 450.0
 const MIN_MOVE_SPEED : float = 250.0
 
 # Multiplier to change ball speed when it collides with the player
-@export var SPEED_MULTIPLIER : float = 1.5
+@export var SPEED_MULTIPLIER : float = 1.1
 
 # TODO calculate this from the scene or something
 const BALL_WIDTH : int = 32
@@ -21,7 +21,7 @@ var min_y : float = 0.0
 
 # initial speed of ball and it's velocity
 @export var move_speed : float = 350.0
-var my_velocity = Vector2(0,0)
+# var my_velocity = Vector2(0,0)
 
 # I need to manage when the player misses the ball
 var player_missed : bool = false
@@ -48,35 +48,8 @@ func _ready():
 	position.y = (max_pos.y - min_pos.y) / 2
 	position.x = (max_pos.x - min_pos.x) / 2
 	
-	# initially the ball should have a random velocity down towards the player
-	# We want the ball to drop within a 90 degree angle
-	# So first calculate a random speed for the ball
-	var rng = RandomNumberGenerator.new()
-	var start_speed_multiplier = rng.randf_range(MIN_MOVE_SPEED, MAX_MOVE_SPEED)
-	
-	# Now we need to determine x and y
-	# x can be anywhere from -1 to 1
-	# y must always be positive so the ball falls
-	# Calculate the x direction
-	var x_direction = rng.randf_range(-1.0, 1.0)
-	
-	# y direction is more complicated because we want it to be 45 degrees either
-	# side of x = 0 (I need to draw a diagram in comments)
-	# For the direction to be 45 degrees the y direction component cannot be more
-	# than the x direction
-	# If x is negative we need to make it positive before determining y
-	# If x is positive it's fine
-	var y_direction = 0
-	if x_direction < 0 :
-		y_direction = rng.randf_range(-(x_direction), 1.0)
-	else :
-		y_direction = rng.randf_range(x_direction, 1.0)
-	# DBG
-	# print(x_direction, " ", y_direction)
-	
-	# Now factor in the speed to get the values for the velocity vector
-	my_velocity.x = x_direction * start_speed_multiplier
-	my_velocity.y = y_direction * start_speed_multiplier
+	# set the initial velocity
+	calc_ball_initial_velocity()
 	
 	# connect our signals
 	Global.level_finished.connect(ball_level_finished)
@@ -97,34 +70,35 @@ func _physics_process(_delta):
 			
 	# Before we move the ball let's see if they'll be outside the camera
 	if position.x < min_x:
-		my_velocity.x = -(my_velocity.x)
+		velocity.x = -(velocity.x)
 	else:
-		my_velocity.x -= 1
+		velocity.x -= 1
 
 	if position.x > max_x:
-		my_velocity.x = -(my_velocity.x)
+		velocity.x = -(velocity.x)
 	else:
-		my_velocity.x += 1
+		velocity.x += 1
 		
 	if position.y < min_y:
-		my_velocity.y = -(my_velocity.y)
+		velocity.y = -(velocity.y)
 	else:
-		my_velocity.y -= 1
+		velocity.y -= 1
 
 	# for the max of y if we got further than y = PLAYER_Y we passed the bat and so
 	# we lose a life
 	if position.y > Global.PLAYER_Y:
 		missed_player()
 	else:
-		my_velocity.y += 1
+		velocity.y += 1
 	
 	if player_missed == false:
 		# normalize the velocity to prevent fast diagonal movement	
-		my_velocity = my_velocity.normalized() * (move_speed * Global.speed_multiplier)
-		velocity = my_velocity
+		# my_velocity = my_velocity.normalized() * (move_speed * SPEED_MULTIPLIER)
+		# my_velocity = my_velocity.normalized() * (move_speed)
+		# velocity = my_velocity
 	
 		# Move the ball and see if we collided with the player
-		var collision = move_and_collide(my_velocity * _delta)
+		var collision = move_and_collide(velocity * _delta)
 		# TODO if this a collision with the player I need to alter the velocity of the ball
 		# based on the velocity of the player
 		if collision:
@@ -132,27 +106,29 @@ func _physics_process(_delta):
 				# OK we collided with the player
 				var player_velocity = collision.get_collider_velocity()
 				# DBG
-				print("Ball Velocity before change ", my_velocity.x, " ", my_velocity.y)
+				# print("Ball Velocity before change ", velocity.x, " ", velocity.y)
 				# There are four different scenarios we need to handle
 				# Speed the ball up if player and ball are going in the same direction
-				if (player_velocity.x > 0 and my_velocity.x > 0) or (player_velocity.x < 0 and my_velocity.x < 0) :
-					my_velocity.x = my_velocity.x * SPEED_MULTIPLIER
+				if (player_velocity.x > 0 and velocity.x > 0) or (player_velocity.x < 0 and velocity.x < 0) :
+					velocity.x = velocity.x * SPEED_MULTIPLIER
 				# Slow the ball down if player and ball are going in opposite directions
-				elif (player_velocity.x < 0 and my_velocity.x > 0) or (player_velocity.x > 0 and my_velocity.x < 0):
-					my_velocity.x = my_velocity.x * (1 / SPEED_MULTIPLIER)
+				elif (player_velocity.x < 0 and velocity.x > 0) or (player_velocity.x > 0 and velocity.x < 0):
+					velocity.x = velocity.x * (1 / SPEED_MULTIPLIER)
 				# After adjusting the x we want to make sure that the y velocity does not
 				# allow the ball to get too horizontal. We can do this by compaing the ratio
 				# of x and y and tweaking y if required
-				if (my_velocity.x < 0):
-					if (my_velocity.y / -(my_velocity.x) < 0.5 ):
-						my_velocity.y = -(my_velocity.x) * 0.5
-				elif (my_velocity.x > 0) :
-					if (my_velocity.y / my_velocity.x < 0.5 ):
-						my_velocity.y = my_velocity.x * 0.5
+				if (velocity.x < 0):
+					if (velocity.y / -(velocity.x) < 0.5 ):
+						velocity.y = -(velocity.x) * 0.5
+				elif (velocity.x > 0) :
+					if (velocity.y / velocity.x < 0.5 ):
+						velocity.y = velocity.x * 0.5
+				# Finally update the actual speed
+				move_speed = move_speed * SPEED_MULTIPLIER
 			# Always adjust the y component to "bounce" the ball
-			my_velocity.y = -(my_velocity.y)
+			# my_velocity.y = -(my_velocity.y)
 			# DBG
-			print("Ball Velocity after change ", my_velocity.x, " ",my_velocity.y)
+			# print("Ball Velocity after change ", velocity.x, " ",velocity.y)
 	
 func hit_block():
 	# DBG
@@ -160,9 +136,9 @@ func hit_block():
 	# When we hit a block we want to bounce off the block in the opposite direction
 	# TODO there are some edge cases that mean we bounce off the side of a block
 	# which are not handled here
-	my_velocity.y = -(my_velocity.y)
-	my_velocity = my_velocity.normalized() * move_speed
-	velocity = my_velocity
+	# TODO replace with bounce()
+	velocity.y = -(velocity.y)
+	velocity = velocity.normalized() * move_speed
 	
 func missed_player():
 	# DBG
@@ -193,3 +169,52 @@ func ball_level_finished():
 	#DBG
 	print("ball_level_finished")
 	queue_free()
+	
+func calc_ball_initial_velocity():
+	# initially the ball should have a random velocity down towards the player
+	# We want the ball to drop within a 90 degree angle but not straight down
+	# So first calculate a random speed for the ball
+	var rng = RandomNumberGenerator.new()
+	var start_speed_multiplier = rng.randf_range(MIN_MOVE_SPEED, MAX_MOVE_SPEED)
+	
+	# OK with a better understanding of Linear Algebra I should be able to 
+	# make this easier to understand
+	
+	# Initially we need a downward vector so y is always 1
+	var initial_velocity = Vector2(0,1)
+	
+	# Now we need to create the x component
+	# x can be between -1 and -0.5 or between 0.5 and 1
+	var x = 0.0
+	while (x > -0.5 and x < 0.5):
+		x = rng.randf_range(-1.0, 1.0)
+	
+	print(x)
+	initial_velocity.x = x
+	
+	# Apply the velocity to the ball
+	velocity = initial_velocity.normalized() * start_speed_multiplier
+	
+	# Now we need to determine x and y
+	# x can be anywhere from -1 to 1
+	# y must always be positive so the ball falls
+	# Calculate the x direction
+	# var x_direction = rng.randf_range(-1.0, 1.0)
+	
+	# y direction is more complicated because we want it to be 45 degrees either
+	# side of x = 0 (I need to draw a diagram in comments)
+	# For the direction to be 45 degrees the y direction component cannot be more
+	# than the x direction
+	# If x is negative we need to make it positive before determining y
+	# If x is positive it's fine
+	#var y_direction = 0
+	#if x_direction < 0 :
+		#y_direction = rng.randf_range(-(x_direction), 1.0)
+	#else :
+		#y_direction = rng.randf_range(x_direction, 1.0)
+	# DBG
+	# print(x_direction, " ", y_direction)
+	
+	# Now factor in the speed to get the values for the velocity vector
+	#my_velocity.x = x_direction * start_speed_multiplier
+	#my_velocity.y = y_direction * start_speed_multiplier
